@@ -1,0 +1,29 @@
+services:
+  stellwerk:
+    image: stellwerk
+    build:
+      context: .
+    environment:
+      - "TZ=Europe/Berlin"
+      - ORIGIN=https://${ORIGIN}
+      - DB=/data/votes.db
+    expose:
+      - "3000"
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stellwerk.rule=Host(`${ORIGIN}`)"
+      - "traefik.http.routers.stellwerk.entrypoints=websecure"
+      - "traefik.http.routers.stellwerk.tls=true"
+      - "traefik.http.routers.stellwerk.tls.certresolver=letsencrypt"
+    volumes:
+      - data:/data
+
+networks:
+  traefik:
+    name: traefik-network
+    external: true
+
+volumes:
+  data:
