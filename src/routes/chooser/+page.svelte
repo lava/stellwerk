@@ -230,6 +230,8 @@
   }
 
   .stream-dialog {
+    display: flex;
+    flex-direction: column;
     padding: 2rem;
     padding-bottom: 3rem;
     border: 1px solid var(--color-border);
