@@ -2,9 +2,18 @@
   import type { PageData } from "./$types";
   import type { Stream } from "$lib/voting-machine";
   import { formatDistanceToNow } from "date-fns";
+  import { onMount } from "svelte";
+  import { invalidateAll } from "$app/navigation";
   let { data }: { data: PageData } = $props();
 
   let selectedStream = $state<Stream>();
+
+  onMount(() => {
+    const interval = setInterval(() => {
+      invalidateAll();
+    }, 5000);
+    return () => clearInterval(interval);
+  });
 </script>
 
 <div class="app">
