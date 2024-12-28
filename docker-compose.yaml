@@ -19,6 +19,7 @@ services:
       - "traefik.http.routers.stellwerk.tls.certresolver=letsencrypt"
     volumes:
       - data:/data
+    restart: unless-stopped
 
 networks:
   traefik:
