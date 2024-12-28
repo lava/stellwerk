@@ -18,6 +18,10 @@ function mapRoomToStreamUrl(room: string): string {
       return "https://streaming.media.ccc.de/38c3/embed/zigzag/hls/native";
     case "Saal GLITCH":
       return "https://streaming.media.ccc.de/38c3/embed/glitch/hls/native";
+    case "Stage HUFF":
+      return "https://streaming.media.ccc.de/38c3/embed/huff/hls/native";
+    case "Stage YELL":
+      return "https://streaming.media.ccc.de/38c3/embed/yell/hls/native";
   }
   return "unknown room";
 }
