@@ -7,7 +7,7 @@
   let streamUrl: string | undefined = $state(data.stream_url);
 
   const DEFAULT_STREAM_URL =
-    "https://streaming.media.ccc.de/38c3/embed/infobeamer/hls/native";
+    "https://streaming.media.ccc.de/39c3/embed/infobeamer/hls/native";
 
   onMount(() => {
     async function fetchData() {
@@ -47,4 +47,3 @@
     height: 100%;
   }
 </style>
-

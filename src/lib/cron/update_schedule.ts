@@ -10,29 +10,28 @@ function* parseSchedule(schedule: any) {
   }
 }
 
-function mapRoomToStreamUrl(room: string): string {
+function mapRoomToStreamUrl(room: string): string | null {
   switch (room) {
-    case "Saal 1":
-      return "https://streaming.media.ccc.de/38c3/embed/eins/hls/native";
-    case "Saal ZIGZAG":
-      return "https://streaming.media.ccc.de/38c3/embed/zigzag/hls/native";
-    case "Saal GLITCH":
-      return "https://streaming.media.ccc.de/38c3/embed/glitch/hls/native";
-    case "Stage HUFF":
-      return "https://streaming.media.ccc.de/38c3/embed/huff/hls/native";
-    case "Stage YELL":
-      return "https://streaming.media.ccc.de/38c3/embed/yell/hls/native";
+    case "One":
+      return "https://streaming.media.ccc.de/39c3/embed/one/hls/native";
+    case "Ground":
+      return "https://streaming.media.ccc.de/39c3/embed/ground/hls/native";
+    case "Zero":
+      return "https://streaming.media.ccc.de/39c3/embed/zero/hls/native";
+    case "Fuse":
+      return "https://streaming.media.ccc.de/39c3/embed/fuse/hls/native";
   }
-  return "unknown room";
+  return null;
 }
 
 const SCHEDULE_URLS = [
-  "https://fahrplan.events.ccc.de/congress/2024/fahrplan/schedule/export/schedule.json",
-  "https://cfp.cccv.de/38c3-community-stages/schedule/export/schedule.json",
+  "https://api.events.ccc.de/congress/2025/schedule.json",
 ] as const;
 
 async function main() {
   const vm = new VotingMachine();
+
+  const unknownRooms = new Set<string>();
 
   for (const scheduleUrl of SCHEDULE_URLS) {
     const response = await fetch(scheduleUrl);
@@ -41,11 +40,17 @@ async function main() {
       const [hours, minutes] = event.duration.split(":");
       const duration =
         (parseInt(hours) * 60 * 60 + parseInt(minutes) * 60) * 1000;
+
+      const streamUrl = mapRoomToStreamUrl(event.room);
+      if (!streamUrl) {
+        unknownRooms.add(event.room);
+        continue;
+      }
       vm.upsertStream({
         id: event.guid,
         title: event.title,
         room: event.room,
-        stream_url: mapRoomToStreamUrl(event.room),
+        stream_url: streamUrl,
         url: event.url,
         description: event.description,
         abstract: event.abstract,
@@ -53,6 +58,10 @@ async function main() {
         end_date: new Date(new Date(event.date).getTime() + duration),
       });
     }
+  }
+  console.log("Skipped events with unknown rooms:");
+  for (const room of unknownRooms) {
+    console.log(`- ${room}`);
   }
 }
 
