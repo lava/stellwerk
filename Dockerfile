@@ -6,7 +6,7 @@ ARG ORIGIN
 WORKDIR /app
 
 # Copy the package.json and pnpm-lock.yaml files to the container
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Install pnpm
 RUN npm install -g pnpm
