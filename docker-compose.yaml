@@ -17,6 +17,8 @@ services:
       - "traefik.http.routers.stellwerk.entrypoints=websecure"
       - "traefik.http.routers.stellwerk.tls=true"
       - "traefik.http.routers.stellwerk.tls.certresolver=letsencrypt"
+      - "gama.enable=true"
+      - "gama.name=Stellwerk"
     volumes:
       - data:/data
     restart: unless-stopped
