@@ -19,6 +19,7 @@ export const votes = sqliteTable(
     choice: text("choice")
       .notNull()
       .references(() => streams.id, { onDelete: "cascade" }),
+    created_at: integer("created_at").notNull().default(0),
   },
   (t) => [unique().on(t.voter, t.choice)],
 );

@@ -2,6 +2,8 @@ import { drizzle } from "drizzle-orm/better-sqlite3";
 import { votes, streams } from "$lib/server/db/schema";
 import { sql, and, eq } from "drizzle-orm";
 
+export type Timestamp = number;
+
 export interface Stream {
   id: string;
   title: string;
@@ -82,8 +84,22 @@ export class VotingMachine {
   async vote(from_user: string, stream_id: string): Promise<void> {
     await this.db
       .insert(votes)
-      .values({ voter: from_user, choice: stream_id })
+      .values({ voter: from_user, choice: stream_id, created_at: Date.now() })
       .onConflictDoNothing();
+  }
+
+  async getRecentVotes(since: Timestamp): Promise<{ streamTitle: string; timestamp: Timestamp }[]> {
+    const results = await this.db
+      .select({
+        streamTitle: streams.title,
+        timestamp: votes.created_at,
+      })
+      .from(votes)
+      .innerJoin(streams, eq(streams.id, votes.choice))
+      .where(sql`${votes.created_at} > ${since}`)
+      .orderBy(votes.created_at);
+
+    return results;
   }
 
   async getLiveStreams(): Promise<Stream[]> {
