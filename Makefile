@@ -1,7 +1,10 @@
-.PHONY: dev schedule
+.PHONY: dev schedule migrate
 
-dev:
+migrate:
+	pnpm drizzle-kit push
+
+dev: migrate
 	pnpm run dev
 
-schedule:
+schedule: migrate
 	pnpx tsx src/lib/cron/update_schedule.ts
